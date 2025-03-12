@@ -90,9 +90,23 @@ void load_words(set<string> & word_list, const string& file_name){
 }
 
 void print_word_ladder(const vector<string>& ladder){
-
+    for (const auto& c : ladder){
+        cout << c << " ";
+    }
 }
 
 void verify_word_ladder(){
-
+    if (ladder.empty()) {
+        cout << "Ladder is empty." << endl;
+        return;
+    }
+    for (size_t i = 0; i < ladder.size() - 1; ++i) {
+        const string& current = ladder[i];
+        const string& next = ladder[i + 1];
+        if (!is_adjacent(current, next)) {
+            cout << "Invalid ladder: \"" << current << "\" and \"" << next << "\" are not adjacent." << endl;
+            return;
+        }
+    }
+    cout << "Ladder is valid!" << endl;
 }
