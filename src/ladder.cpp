@@ -1,6 +1,8 @@
 #include "ladder.h"
 #include <iostream>
 
+vector<string> global_ladder;
+
 void error(string word1, string word2, string msg){
     cout << "Error: " << msg << ". Because of: " << word1 << "and " << word2 << endl;
 }
@@ -58,22 +60,20 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     queue<vector<string>> ladder_queue;
     ladder_queue.push({begin_word});
     set<string> visited;
-    visited.insert(begin_word);
+
     while(!ladder_queue.empty()){
         vector<string> ladder = ladder_queue.front();
         ladder_queue.pop();
         string last_word = ladder.back();
-        for(auto w : word_list){
-            if (is_adjacent(last_word, w)){
-                if (visited.find(w) == visited.end()){
-                    vector<string> new_ladder = ladder;
-                    new_ladder.push_back(w);
-                    if (w == end_word){
-                        return new_ladder;
-                    }
-                    ladder_queue.push(new_ladder);
-                    visited.insert(w);
+        for(const string& w : word_list){
+            if (is_adjacent(last_word, w) && visited.find(w) == visited.end()){
+                vector<string> new_ladder = ladder;
+                new_ladder.push_back(w);
+                if (w == end_word){
+                    return new_ladder;
                 }
+                ladder_queue.push(new_ladder);
+                visited.insert(w);
             }
         }
     }
@@ -92,18 +92,18 @@ void load_words(set<string> & word_list, const string& file_name){
 void print_word_ladder(const vector<string>& ladder){
     for (const auto& c : ladder){
         cout << c << " ";
-        cout << endl;
     }
+    cout << endl;
 }
 
-void verify_word_ladder(const vector<string>& ladder) {
-    if (ladder.empty()) {
+void verify_word_ladder() {
+    if (global_ladder.empty()) {
         cout << "Ladder is empty." << endl;
         return;
     }
-    for (size_t i = 0; i < ladder.size() - 1; ++i) {
-        const string& current = ladder[i];
-        const string& next = ladder[i + 1];
+    for (size_t i = 0; i < global_ladder.size() - 1; ++i) {
+        const string& current = global_ladder[i];
+        const string& next = global_ladder[i + 1];
         if (!is_adjacent(current, next)) {
             cout << "Invalid ladder: \"" << current << "\" and \"" << next << "\" are not adjacent." << endl;
             return;
