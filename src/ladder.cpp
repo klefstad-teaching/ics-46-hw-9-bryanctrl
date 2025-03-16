@@ -95,7 +95,7 @@ void print_word_ladder(const vector<string>& ladder){
     }
 }
 
-void verify_word_ladder(){
+void verify_word_ladder(const vector<string>& ladder) {
     if (ladder.empty()) {
         cout << "Ladder is empty." << endl;
         return;
