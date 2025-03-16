@@ -82,6 +82,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     }
     return {};
 }
+}
 
 void load_words(set<string> & word_list, const string& file_name){
     ifstream infile(file_name);
