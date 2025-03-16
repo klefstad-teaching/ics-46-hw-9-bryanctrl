@@ -77,6 +77,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
                     return new_ladder;
                 }
                 ladder_queue.push(new_ladder);
+                visited.insert(w);
             }
         }
     }
