@@ -71,18 +71,18 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         for(const string& w : word_list){
             if (is_adjacent(last_word, w)){
                 if (find(ladder.begin(), ladder.end(), w) == ladder.end()){
-                vector<string> new_ladder = ladder;
-                new_ladder.push_back(w);
-                if (w == end_word){
-                    return new_ladder;
+                    vector<string> new_ladder = ladder;
+                    new_ladder.push_back(w);
+                    if (w == end_word){
+                        return new_ladder;
+                    }
+                    ladder_queue.push(new_ladder);
+                    visited.insert(w);
                 }
-                ladder_queue.push(new_ladder);
-                visited.insert(w);
             }
         }
     }
     return {};
-}
 }
 
 void load_words(set<string> & word_list, const string& file_name){
