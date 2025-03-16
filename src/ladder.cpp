@@ -6,50 +6,83 @@ void error(string word1, string word2, string msg){
     cout << "Error: " << msg << ". Because of: " << word1 << "and " << word2 << endl;
 }
 
+// bool edit_distance_within(const std::string& str1, const std::string& str2, int d){
+//     if (d == 0){
+//         int diff_count = 0;
+//         if (str1.length() != str2.length()){
+//             return false;
+//         }
+//         for(int i = 0; i < str1.length(); i++){
+//             if (str1[i] != str2[i]){
+//                 diff_count++;
+//                 if (diff_count > d){
+//                     return false;
+//                 } 
+//             }
+//         }
+//         return true;
+//     }
+//     else if (d == 1){
+//         const string& shorter = (str1.length() < str2.length()) ? str1 : str2;
+//         const string& longer = (str1.length() < str2.length()) ? str2 : str1;
+//         if (longer.length() - shorter.length() > 1){
+//             return false;
+//         }
+//         int i = 0, j = 0;
+//         int diff_count = 0;
+//         while(i < shorter.length() && j < longer.length()){
+//             if (shorter[i] == longer[j]){
+//                 i++;
+//                 j++;
+//             } else {
+//                 diff_count++;
+//                 if (diff_count > d){
+//                     return false;
+//                 }
+//                 j++;
+//             }
+//         }
+//         if (j < longer.length()){
+//             diff_count++;
+//         }
+//         return diff_count <= d;
+//     } else {
+//         return false;
+//     }
+// }
 bool edit_distance_within(const std::string& str1, const std::string& str2, int d){
-    if (d == 0){
-        int diff_count = 0;
-        if (str1.length() != str2.length()){
-            return false;
-        }
-        for(int i = 0; i < str1.length(); i++){
-            if (str1[i] != str2[i]){
-                diff_count++;
-                if (diff_count > d){
-                    return false;
-                } 
+    if(d == 0){
+        return str1 == str2;
+    } else if(d == 1){
+        if(str1.size() == str2.size()){
+            int diff = 0;
+            for (size_t i = 0; i < str1.size(); i++){
+                if(str1[i] != str2[i]) diff++;
+                if(diff > 1) return false;
             }
+            return diff == 1;
         }
-        return true;
-    }
-    else if (d == 1){
-        const string& shorter = (str1.length() < str2.length()) ? str1 : str2;
-        const string& longer = (str1.length() < str2.length()) ? str2 : str1;
-        if (longer.length() - shorter.length() > 1){
-            return false;
-        }
-        int i = 0, j = 0;
-        int diff_count = 0;
-        while(i < shorter.length() && j < longer.length()){
-            if (shorter[i] == longer[j]){
-                i++;
-                j++;
-            } else {
-                diff_count++;
-                if (diff_count > d){
-                    return false;
+        else if(abs((int)str1.size() - (int)str2.size()) == 1){
+            const string& shorter = (str1.size() < str2.size()) ? str1 : str2;
+            const string& longer  = (str1.size() < str2.size()) ? str2 : str1;
+            int i = 0, j = 0;
+            bool foundDifference = false;
+            while(i < shorter.size() && j < longer.size()){
+                if(shorter[i] == longer[j]){
+                    i++; j++;
+                } else {
+                    if(foundDifference) return false;
+                    foundDifference = true;
+                    j++;
                 }
-                j++;
             }
+            return true;
         }
-        if (j < longer.length()){
-            diff_count++;
-        }
-        return diff_count <= d;
-    } else {
         return false;
     }
+    return false;
 }
+
 
 bool is_adjacent(const string& word1, const string& word2){
     return edit_distance_within(word1, word2, 1);
@@ -70,19 +103,30 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     diction.erase(begin_word);
 
     while(!ladder_queue.empty()){
-        vector<string> ladder = ladder_queue.front();
-        ladder_queue.pop();
-        string last_word = ladder.back();
-        for(const string& w : word_list){
-            if (is_adjacent(last_word, w) && diction.find(w) != diction.end()){
+        int level_size = ladder_queue.size();
+        set<string> words_used;
+        for (int i = 0; i < level_size; i++){
+            vector<string> ladder = ladder_queue.front();
+            ladder_queue.pop();
+            string last_word = ladder.back();
+            vector<string> candidates;
+            for (const auto& w : diction){
+                if (is_adjacent(last_word, w)){
+                    candidates.push_back(w)
+                }
+            }
+            for (const auto &w : candidates) {
                 vector<string> new_ladder = ladder;
                 new_ladder.push_back(w);
                 if (w == end_word){
                     return new_ladder;
                 }
                 ladder_queue.push(new_ladder);
-                diction.erase(w);
+                words_used.insert(w);
             }
+        }
+        for (const auto &w : words_used) {
+            diction.erase(w);
         }
     }
     error(begin_word, end_word, "no ladder found");
