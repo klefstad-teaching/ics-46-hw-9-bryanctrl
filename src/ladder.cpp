@@ -59,29 +59,33 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     if (begin_word == end_word){
         return {begin_word, end_word};
     }
+
+    if (word_list.find(end_word) == word_list.end()){
+        return {};
+    }
+    
     queue<vector<string>> ladder_queue;
+    set<string> diction = word_list;
     ladder_queue.push({begin_word});
-    set<string> visited;
-    visited.insert(begin_word);
+    diction.erase(begin_word);
 
     while(!ladder_queue.empty()){
         vector<string> ladder = ladder_queue.front();
         ladder_queue.pop();
         string last_word = ladder.back();
         for(const string& w : word_list){
-            if (is_adjacent(last_word, w)){
-                if (find(ladder.begin(), ladder.end(), w) == ladder.end()){
-                    vector<string> new_ladder = ladder;
-                    new_ladder.push_back(w);
-                    if (w == end_word){
-                        return new_ladder;
-                    }
-                    ladder_queue.push(new_ladder);
-                    visited.insert(w);
+            if (is_adjacent(last_word, w) && diction.find(w) != diction.end()){
+                vector<string> new_ladder = ladder;
+                new_ladder.push_back(w);
+                if (w == end_word){
+                    return new_ladder;
                 }
+                ladder_queue.push(new_ladder);
+                diction.erase(w);
             }
         }
     }
+    error(begin_word, end_word, "no ladder found");
     return {};
 }
 
