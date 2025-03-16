@@ -109,7 +109,7 @@ void print_word_ladder(const vector<string>& ladder){
 #define my_assert(e) {cout << #e << ((e) ? " passed": " failed") << endl;}
 void verify_word_ladder() {
     set<string> word_list;
-    load_words(word_list, "words.txt");
+    load_words(word_list, "src/words.txt");
     
     my_assert(generate_word_ladder("cat", "dog", word_list).size() == 4);
 
