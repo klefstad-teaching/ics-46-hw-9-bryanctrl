@@ -112,7 +112,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
             vector<string> candidates;
             for (const auto& w : diction){
                 if (is_adjacent(last_word, w)){
-                    candidates.push_back(w)
+                    candidates.push_back(w);
                 }
             }
             for (const auto &w : candidates) {
